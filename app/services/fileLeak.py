@@ -77,18 +77,23 @@ class HTTPReq():
 
     def req(self):
         content = b''
-        conn = utils.http_req(self.url.url, 'get', timeout=(3, 6), stream=True)
-        self.conn = conn
-        start_time = time.time()
-        for data in conn.iter_content(chunk_size=512):
-            if time.time() - start_time >= self.read_timeout:
-                break
-            content += data
-            if len(content) >= int(self.max_length):
-                break
+        try:
+            conn = utils.http_req(self.url.url, 'get', timeout=(3, 6), stream=True)
+        except:
+            self.status_code = 404
+            self.content = b''
+        else:
+            self.conn = conn
+            start_time = time.time()
+            for data in conn.iter_content(chunk_size=512):
+                if time.time() - start_time >= self.read_timeout:
+                    break
+                content += data
+                if len(content) >= int(self.max_length):
+                    break
 
-        self.status_code = conn.status_code
-        self.content = content[:self.max_length]
+            self.status_code = conn.status_code
+            self.content = content[:self.max_length]
 
         content_len = self.conn.headers.get("Content-Length", len(self.content))
         self.conn.headers["Content-Length"] = content_len
@@ -540,4 +545,3 @@ def file_leak(targets, dicts, gen_dict = True) -> List[Page]:
             logger.exception(e)
 
     return ret
-
