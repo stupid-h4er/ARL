@@ -73,13 +73,12 @@ class NucleiScan(object):
     def exec_nuclei(self):
         self._gen_target_file()
 
-        command = [self.nuclei_bin_path, "-duc",
-                   "-tags cve",
+        command = [self.nuclei_bin_path,
                    "-severity low,medium,high,critical",
-                   "-type http",
                    "-l {}".format(self.nuclei_target_path),
                    "-json",
                    "-stats",
+                   "-headless",
                    "-stats-interval 60",
                    "-o {}".format(self.nuclei_result_path),
                    ]
