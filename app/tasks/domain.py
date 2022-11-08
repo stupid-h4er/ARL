@@ -905,7 +905,15 @@ class DomainTask(CommonTask):
             utils.conn_db('vuln').insert_one(item)
 
     def find_vhost_vuln(self):
-        domains = find_private_domain_by_task_id(self.task_id)
+        domains = []
+        newwordsfile = open("newwords.txt,'r')
+        newwords = newwordsfile.readlines()
+        for n in newwords:
+            n = n.strip()
+            domain = n + "." + self.base_domain
+            domains.append(domain)
+        p_domains = domains = find_private_domain_by_task_id(self.task_id)
+        domains.extend(p_domains)
         if not domains:
             return
 
